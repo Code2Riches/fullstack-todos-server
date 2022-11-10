@@ -51,22 +51,21 @@ const mockToDos = [{
 	completedDate: null
 }]
 
-/* GET mocktodos listing. */
+/* GET Home Page. */
 router.get("/all", async function (req, res, next) {
 
     try {
         const toDo = await db()
             .collection("todos")
-            .find({
-                id: {
-                    $exists: true,
-                },
-            }).toArray();
+            .find({})
+			.toArray();
+
         res.json({
             success: true,
             todo: mockToDos,
         }); 
-    } catch (err) {
+    } 
+	catch (err) {
         // In the catch block, we always want to do 2 things: console.log the error & respond with an error object
         console.log(err)
         res.json({
@@ -75,5 +74,43 @@ router.get("/all", async function (req, res, next) {
         });
     }
   });
+
+/* Post New ToDo Item */  
+  router.post("/create-one", async (req, res) => {
+    try {
+        const newToDo = {
+            ...req.body,
+            id: uuid(),
+			title: req.body.title,
+			description: req.body.description,
+			isComplete: false,
+			priority: req.body.priority,
+			creationDate: new Date(),
+			completedDate: null
+        }
+
+        console.log(newToDo)
+
+        const result = await db()
+            .collection("todos")
+            .insertOne(newToDo)
+
+        console.log(result)
+
+        res.json({
+            success: true,
+			todo: newToDo
+        })
+
+    }  
+	
+	catch (error) {
+        console.log(err)
+        res.json({
+            success: false,
+            error: err.toString(),
+        });
+    }   
+  })
 
   module.exports = router;
