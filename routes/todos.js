@@ -58,7 +58,7 @@ router.get("/all", async (req, res, next) => {
             .collection("todos")
             .find({})
 			.toArray();
-
+			console.log(toDoList)
         res.json({
             success: true,
             todo: toDoList,
